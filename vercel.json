@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/"
+    }
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "gh-pages": false
+    }
+  },
+  "ignoreCommand": "git check-ignore"
+}
