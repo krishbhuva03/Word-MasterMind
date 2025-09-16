@@ -5,8 +5,12 @@ const path = require("path");
 const { Game } = require("./game");
 const { Dictionary } = require("./dictionary");
 
+// --- MODIFICATION START ---
+// Variables are declared at the top level to persist across function invocations.
 let dictionaries;
 let defaultDictionary;
+let isInitialized = false;
+// --- MODIFICATION END ---
 
 const gameOptions = {
   totalAttempts: Number(process.env.TOTAL_ATTEMPTS) || 7,
@@ -15,18 +19,18 @@ const gameOptions = {
 const gamesById = new Map();
 
 // Serve static assets from the ../assets directory
+// NOTE: Vercel handles static assets differently. For this to work, your 'assets'
+// folder should be renamed to 'public' and placed in the project's root directory.
+// Fastify will still serve them locally, and Vercel will serve them automatically in production.
 fastify.register(fastifyStatic, {
-  root: path.join(__dirname, "../assets/"),
-  prefix: "/", // optional: makes files available at http://localhost:3333/
+  root: path.join(__dirname, "../public/"), // Changed from ../assets/
 });
 
 // Root route: show status or load index.html if it exists
 fastify.get("/", async (req, reply) => {
-  try {
-    return reply.sendFile("index.html");
-  } catch (err) {
-    return { status: "Server is running", routes: ["/game/start", "/game/submit"] };
-  }
+  // Vercel's routes in vercel.json will handle serving index.html directly.
+  // This route will now primarily act as a health check for the API.
+  return { status: "Server is running", routes: ["/game/start", "/game/submit"] };
 });
 
 // Start a new game
@@ -59,21 +63,36 @@ fastify.post("/game/submit", (req, res) => {
   return result;
 });
 
-// Start server
-const start = async () => {
+
+// --- MODIFICATION START ---
+// This function handles the one-time asynchronous setup (loading dictionaries).
+// The isInitialized flag ensures it only runs once per serverless instance.
+const initializeServer = async () => {
+  if (isInitialized) {
+    return;
+  }
   try {
     dictionaries = await Dictionary.getAllAvailableDictionaries();
     defaultDictionary = dictionaries.get("en-us-5");
-    console.log("Current dictionaries: " + [...dictionaries.keys()]);
-
-    const port = process.env.PORT || 3333;
-    const address = process.env.LISTEN_ADDRESS || "";
-
-    await fastify.listen(port, address);
+    console.log("Dictionaries initialized: " + [...dictionaries.keys()]);
+    isInitialized = true;
   } catch (err) {
-    fastify.log.error(err);
-    process.exit(1);
+    fastify.log.error("Initialization failed:", err);
+    // Throwing an error here will cause the serverless function invocation to fail.
+    throw new Error("Could not initialize dictionaries.");
   }
 };
 
-start();
+// The original start() function and its call are removed.
+// They are replaced with this export, which is Vercel's entry point.
+module.exports = async (req, res) => {
+  // Ensure the server is initialized before handling any request.
+  await initializeServer();
+
+  // Wait for all Fastify plugins to be ready.
+  await fastify.ready();
+
+  // Pass the incoming request to the Fastify server.
+  fastify.server.emit('request', req, res);
+};
+// --- MODIFICATION END ---

@@ -1,23 +1,15 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
-  "outputDirectory": "build",
-  "framework": "create-react-app",
   "builds": [
     {
-      "src": "build/**/*",
-      "use": "@vercel/static"
+      "src": "src/server.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "src/server.js"
     }
   ]
-}
-    "deploymentEnabled": {
-      "gh-pages": false
-    }
-  }
 }
