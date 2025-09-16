@@ -41,7 +41,8 @@ const app = new Vue({
     methods: {
 
         startGame: async function() {
-            const response = await fetch("/game/start", {
+            // --- MODIFICATION HERE ---
+            const response = await fetch("/api/game/start", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -141,7 +142,8 @@ const app = new Vue({
                 }
             }
 
-            const response = await fetch("/game/submit", {
+            // --- MODIFICATION HERE ---
+            const response = await fetch("/api/game/submit", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
