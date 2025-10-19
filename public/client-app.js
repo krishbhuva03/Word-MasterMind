@@ -35,7 +35,9 @@ const app = new Vue({
 
         gameState: undefined,
         error: undefined,
-        darkMode: false
+        darkMode: false,
+        currentInput: '',
+        isMobile: false
     },
 
     methods: {
@@ -78,11 +80,18 @@ const app = new Vue({
             }
 
             console.log(this.gameState)
+            
+            // Focus mobile input after game starts
+            if (this.isMobile) {
+                this.focusMobileInput();
+            }
         },
 
         handleNewLetter: async function(key) {
             if (key === "ENTER" && this.gameState.finished) {
                 this.startGame();
+                this.focusMobileInput();
+                return;
             }
 
             if (!this.gameState || this.gameState.finished) {
@@ -96,6 +105,54 @@ const app = new Vue({
             } else {
                 this.addLetter(key);
             }
+            
+            // Keep mobile input focused and clear
+            if (this.isMobile) {
+                this.focusMobileInput();
+                this.currentInput = '';
+            }
+        },
+
+        handleKeyboardClick: async function(key) {
+            await this.handleNewLetter(key);
+            // On mobile, focus the input after keyboard click
+            if (this.isMobile) {
+                this.focusMobileInput();
+            }
+        },
+
+        handleMobileInput: function(event) {
+            const input = event.target.value.toUpperCase();
+            if (input.length > 0) {
+                const lastChar = input[input.length - 1];
+                if (this.allowedLetters.has(lastChar)) {
+                    this.handleNewLetter(lastChar);
+                }
+            }
+        },
+
+        handleMobileKeydown: async function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                await this.handleNewLetter('ENTER');
+            } else if (event.key === 'Backspace') {
+                event.preventDefault();
+                await this.handleNewLetter('BACKSPACE');
+            }
+        },
+
+        focusMobileInput: function() {
+            if (this.isMobile && this.$refs.mobileInput) {
+                this.$nextTick(() => {
+                    this.$refs.mobileInput.focus();
+                    this.currentInput = '';
+                });
+            }
+        },
+
+        detectMobile: function() {
+            this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+                         || window.innerWidth <= 768;
         },
 
         addLetter: function(letter) {
@@ -232,35 +289,45 @@ const app = new Vue({
     },
 
     mounted: function() {
+        // Detect mobile device
+        this.detectMobile();
+        
         this.startGame();
 
-        document.addEventListener("keyup", async (e) => {
-            if (e.ctrlKey || e.altKey || e.metaKey) {
-                return
-            }
-            await this.handleNewLetter(e.key.toUpperCase());
-        });
+        // Desktop keyboard event (disabled on mobile to use native keyboard)
+        if (!this.isMobile) {
+            document.addEventListener("keyup", async (e) => {
+                if (e.ctrlKey || e.altKey || e.metaKey) {
+                    return
+                }
+                await this.handleNewLetter(e.key.toUpperCase());
+            });
+        }
 
-        // Add touch event handling for better mobile support
-        document.addEventListener("touchstart", (e) => {
-            // Prevent default only if target is a button to allow scrolling elsewhere
-            if (e.target.classList.contains('key')) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-
-        // Ensure buttons work on mobile
-        document.querySelectorAll('.btn.key').forEach(button => {
-            button.addEventListener('touchend', async (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                const key = e.target.textContent.trim();
-                await this.handleNewLetter(key);
-            }, { passive: false });
-        });
+        // Auto-focus mobile input when clicking anywhere on mobile
+        if (this.isMobile) {
+            document.addEventListener('touchstart', (e) => {
+                // Focus mobile input when touching the game area (but not buttons)
+                if (!e.target.classList.contains('key') && !e.target.classList.contains('mobile-input')) {
+                    this.focusMobileInput();
+                }
+            });
+            
+            // Re-focus when input loses focus
+            document.addEventListener('focusout', () => {
+                setTimeout(() => {
+                    this.focusMobileInput();
+                }, 100);
+            });
+        }
 
         if (isDarkModePreferred()) {
             this.toggleDarkMode();
         }
+        
+        // Handle window resize to re-detect mobile
+        window.addEventListener('resize', () => {
+            this.detectMobile();
+        });
     },
 })

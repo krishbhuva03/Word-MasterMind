@@ -47,12 +47,32 @@
                     </div>
                 </div>
             </div>
+            <!-- Hidden input for mobile keyboard -->
+            <input 
+                ref="mobileInput"
+                type="text"
+                class="mobile-input"
+                v-model="currentInput"
+                @input="handleMobileInput"
+                @keydown="handleMobileKeydown"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="characters"
+                spellcheck="false"
+                maxlength="10"
+            />
+
             <div class="keyboard">
+                <!-- Mobile keyboard hint -->
+                <div v-if="isMobile" class="mobile-hint" @click="focusMobileInput">
+                    📱 Tap here to use your device keyboard
+                </div>
+                
                 <div v-for="keyrow in keyboard">
                     <button
                         v-bind:class="classForKey(key)"
                         v-for="key in keyrow"
-                        v-on:click="handleNewLetter(key)"
+                        v-on:click="handleKeyboardClick(key)"
                         >
                         {{ key }}
                     </button>
