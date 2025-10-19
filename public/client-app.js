@@ -30,7 +30,7 @@ const app = new Vue({
         keyboard: [
             [..."QWERTYUIOP"],
             [..."ASDFGHJKL"],
-            ["ENTER", ..."ZXCVBNM", "⌫ "],
+            ["ENTER", ..."ZXCVBNM", "⌫"],
         ],
 
         gameState: undefined,
@@ -91,7 +91,7 @@ const app = new Vue({
 
             if (key === "ENTER") {
                 await this.submitWord();
-            } else if (key === "⌫ " || key === "BACKSPACE") {
+            } else if (key === "⌫" || key === "BACKSPACE") {
                 this.deleteLetter();
             } else {
                 this.addLetter(key);
@@ -239,6 +239,24 @@ const app = new Vue({
                 return
             }
             await this.handleNewLetter(e.key.toUpperCase());
+        });
+
+        // Add touch event handling for better mobile support
+        document.addEventListener("touchstart", (e) => {
+            // Prevent default only if target is a button to allow scrolling elsewhere
+            if (e.target.classList.contains('key')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Ensure buttons work on mobile
+        document.querySelectorAll('.btn.key').forEach(button => {
+            button.addEventListener('touchend', async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const key = e.target.textContent.trim();
+                await this.handleNewLetter(key);
+            }, { passive: false });
         });
 
         if (isDarkModePreferred()) {
