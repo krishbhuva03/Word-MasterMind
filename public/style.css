@@ -125,21 +125,22 @@ body.dark .board-row.current {
     border: 2px solid #555;
 }
 
-/* Mobile board adjustments */
+/* Mobile board adjustments - More space since visual keyboard is hidden */
 @media (max-width: 768px) {
     .board {
-        margin: 8px 0;
-        max-width: 300px;
-        flex: 0 0 auto;
+        margin: 15px 0;
+        max-width: 320px;
+        flex: 1;
+        justify-content: center;
     }
     
     .board-row {
-        margin-bottom: 2px;
+        margin-bottom: 4px;
     }
     
     .board-row.current {
-        border-radius: 4px;
-        padding: 1px;
+        border-radius: 6px;
+        padding: 2px;
     }
 }
 
@@ -188,25 +189,25 @@ body.dark .tile.correct {
     border-color: #5d9956;
 }
 
-/* Mobile tile adjustments */
+/* Mobile tile adjustments - Larger tiles with more space available */
 @media (max-width: 768px) {
     .tile {
-        width: 40px;
-        height: 40px;
-        margin: 1.5px;
-        font-size: 1.3rem;
-        border-radius: 3px;
-        line-height: 40px;
+        width: 50px;
+        height: 50px;
+        margin: 3px;
+        font-size: 1.6rem;
+        border-radius: 4px;
+        line-height: 50px;
     }
 }
 
 @media (max-width: 480px) {
     .tile {
-        width: 35px;
-        height: 35px;
-        margin: 1px;
-        font-size: 1.1rem;
-        line-height: 35px;
+        width: 45px;
+        height: 45px;
+        margin: 2px;
+        font-size: 1.4rem;
+        line-height: 45px;
     }
 }
 
@@ -222,12 +223,14 @@ body.dark .tile.correct {
     background-color: rgba(106, 170, 100, 0.1);
     border: 1px solid #6aaa64;
     border-radius: 8px;
-    padding: 10px;
+    padding: 15px;
     margin-bottom: 10px;
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: #6aaa64;
     cursor: pointer;
     transition: all 0.2s ease;
+    text-align: center;
+    font-weight: 500;
 }
 
 .mobile-hint:active {
@@ -239,6 +242,16 @@ body.dark .mobile-hint {
     background-color: rgba(106, 170, 100, 0.15);
     color: #8bc34a;
     border-color: #8bc34a;
+}
+
+/* Make mobile hint more prominent on mobile */
+@media (max-width: 768px) {
+    .mobile-hint {
+        padding: 20px;
+        font-size: 1.1rem;
+        margin: 15px 0;
+        box-shadow: 0 2px 8px rgba(106, 170, 100, 0.2);
+    }
 }
 
 .keyboard > div {
@@ -316,44 +329,20 @@ body.dark .btn.key.present {
     background-color: #c9b458;
 }
 
-/* Mobile keyboard adjustments */
+/* Mobile keyboard adjustments - Hide visual keyboard on mobile */
 @media (max-width: 768px) {
+    .keyboard > div {
+        display: none !important;
+    }
+    
     .keyboard {
         margin-top: 10px;
         padding: 0 3px;
     }
     
-    .keyboard > div {
-        margin-bottom: 4px;
-        gap: 2px;
-    }
-    
-    .btn.key {
-        height: 44px;
-        padding: 0;
-        font-size: 0.8rem;
-        min-width: 32px;
-        flex: 1;
-        max-width: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        touch-action: manipulation;
-        -webkit-tap-highlight-color: rgba(0,0,0,0.1);
-    }
-    
-    .btn.key:active {
-        background-color: #999 !important;
-        transform: scale(0.9);
-    }
-}
-
-@media (max-width: 480px) {
-    .btn.key {
-        height: 40px;
-        font-size: 0.75rem;
-        min-width: 28px;
-        max-width: 35px;
+    /* Keep only the mobile hint visible */
+    .mobile-hint {
+        display: block !important;
     }
 }
 
