@@ -4,12 +4,12 @@
   "scripts": {
     "dev": "node src/server.js",
     "start": "node src/server.js",
-    "build": "echo 'No build step required for Fastify backend'"
+    "build": "echo 'Build completed - ready for Vercel deployment'"
   },
   "dependencies": {
-    "fastify": "^3.27.0",
-    "fastify-helmet": "^7.0.0",
-    "fastify-static": "^4.5.0"
+    "@fastify/static": "^8.2.0",
+    "fastify": "5",
+    "fastify-helmet": "^7.0.0"
   },
   "devDependencies": {
     "jest": "^27.4.7"

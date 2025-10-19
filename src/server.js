@@ -1,5 +1,5 @@
 const fastify = require("fastify")({ logger: true });
-const fastifyStatic = require("fastify-static");
+const fastifyStatic = require("@fastify/static");
 const path = require("path");
 
 const { Game } = require("./game");
@@ -24,7 +24,10 @@ fastify.register(fastifyStatic, {
 
 // API health check route
 fastify.get("/api", async (req, reply) => {
-  return { status: "API Server is running", routes: ["/api/game/start", "/api/game/submit"] };
+  return {
+    status: "API Server is running",
+    routes: ["/api/game/start", "/api/game/submit"],
+  };
 });
 
 // Start a new game
@@ -57,8 +60,7 @@ fastify.post("/api/game/submit", (req, res) => {
   return result;
 });
 
-
-// --- SERVER INITIALIZATION AND EXPORT (No changes needed here) ---
+// --- SERVER INITIALIZATION ---
 
 const initializeServer = async () => {
   if (isInitialized) {
@@ -75,8 +77,24 @@ const initializeServer = async () => {
   }
 };
 
+// --- EXPORT FOR VERCEL ---
 module.exports = async (req, res) => {
   await initializeServer();
   await fastify.ready();
-  fastify.server.emit('request', req, res);
+  fastify.server.emit("request", req, res);
 };
+
+// --- LOCAL DEV SUPPORT ---
+if (require.main === module) {
+  const start = async () => {
+    await initializeServer();
+    try {
+    await fastify.listen({ port: process.env.PORT || 3000, host: '0.0.0.0' });
+      console.log("✅ Server running at http://localhost:3000");
+    } catch (err) {
+      fastify.log.error(err);
+      process.exit(1);
+    }
+  };
+  start();
+}
