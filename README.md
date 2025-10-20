@@ -57,6 +57,34 @@ Security headers, health checks, optimized builds. Enterprise-ready from day one
 
 ---
 
+## 📢 Advertising & Monetization
+
+<div align="center">
+<img src="https://user-images.githubusercontent.com/74038190/212257454-16e3712e-945a-4ca2-b238-408ad0bf87e6.gif" width="100">
+</div>
+
+**Word MasterMind features Google AdSense integration** to support the development and hosting costs while keeping the game **completely free** for all users.
+
+### 🎯 **Ad Placement Strategy**
+- **📱 Mobile-Friendly**: No ads on mobile devices - pure gaming experience
+- **💻 Desktop Sidebar**: Non-intrusive vertical ads on left and right sides (screens > 1200px)
+- **📄 Below-the-fold**: Additional content at the bottom for users who scroll down
+- **🎮 Game-First**: Main gameplay area is always clean and distraction-free
+
+### ✅ **Google Approved**
+- All ads are served through **Google AdSense**
+- Content complies with Google's advertising policies
+- Safe, family-friendly advertisements only
+- Responsive ad formats that adapt to different screen sizes
+
+<div align="center">
+
+*Playing Word MasterMind is free forever. Ads help keep the servers running!*
+
+</div>
+
+---
+
 ## 🎮 Game Rules
 
 ```
