@@ -558,3 +558,65 @@ body.dark .btn.key:focus {
         transition-duration: 0.01ms !important;
     }
 }
+
+/* Desktop sidebar ads */
+.desktop-only {
+    display: none;
+}
+
+/* Show ads only on desktop screens (wider than 1200px to ensure enough space) */
+@media (min-width: 1200px) {
+    .desktop-only {
+        display: block;
+    }
+    
+    .left-ad {
+        position: fixed;
+        top: 50%;
+        left: 10px;
+        transform: translateY(-50%);
+        width: 160px;
+        max-height: 600px;
+        z-index: 100;
+    }
+    
+    .right-ad {
+        position: fixed;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        width: 160px;
+        max-height: 600px;
+        z-index: 100;
+    }
+    
+    /* Ensure main content has enough margin to not overlap with ads */
+    body {
+        margin-left: 180px;
+        margin-right: 180px;
+    }
+    
+    .main-container {
+        max-width: calc(100% - 360px);
+    }
+}
+
+/* For very wide screens, increase ad space */
+@media (min-width: 1600px) {
+    .left-ad, .right-ad {
+        width: 200px;
+    }
+    
+    .left-ad {
+        left: 20px;
+    }
+    
+    .right-ad {
+        right: 20px;
+    }
+    
+    body {
+        margin-left: 240px;
+        margin-right: 240px;
+    }
+}
